@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>게임 UI 템플릿 도출기</title>
+  <title>게임 요소 그물 네트워크</title>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -331,6 +331,7 @@
       const [sel, setSel] = useState({});          // {axisId: [elId,...]}
       const [feats, setFeats] = useState(new Set()); // 기능 태그 id
       const [tags, setTags] = useState(new Set());   // 테마 태그 id
+      const [title, setTitle] = useState("");        // 게임 제목 (선택)
 
       const selKeys = useMemo(() => new Set(Object.entries(sel).flatMap(([a, arr]) => (arr || []).map((e) => `${a}.${e}`))), [sel]);
       const uiList = useMemo(() => deriveUI(selKeys, feats), [selKeys, feats]);
@@ -386,7 +387,8 @@
       const tagSel = [...tags].map((id) => T(TAG_BY[id].name));
       const buildMd = () => {
         const L = [];
-        L.push("# " + (ko ? "게임 UI 스펙 시트" : "Game UI Spec Sheet"), "");
+        if (title.trim()) L.push("# " + title.trim(), "", "_" + (ko ? "게임 UI 스펙 시트" : "Game UI Spec Sheet") + "_", "");
+        else L.push("# " + (ko ? "게임 UI 스펙 시트" : "Game UI Spec Sheet"), "");
         L.push("- " + (ko ? "장르" : "Genre") + ": " + (exactGenre ? T(exactGenre.name) : (ko ? "커스텀 조합" : "Custom")));
         if (derived.length) L.push("- " + (ko ? "가까운 장르" : "Closest") + ": " + derived.map((d) => T(d.g.name) + " " + Math.round(d.p * 100) + "%").join(", "));
         L.push("", "## " + (ko ? "선택 요소" : "Elements"));
@@ -397,6 +399,7 @@
         BASE_UI.forEach((u) => L.push("- " + T(u[0]) + " — " + T(u[1])));
         L.push("", "### " + (ko ? "조합 유래" : "From this build"));
         uiList.forEach((u) => L.push("- " + T(u.n) + " — " + T(u.d) + (u.src.length ? " (" + (ko ? "유래" : "from") + ": " + u.src.map((s) => T(s)).join(", ") + ")" : "")));
+        L.push("", "---", "[Game Designer's Mechanic Mesh](https://zondug.github.io/game-tools/), 2026 Wissen & Ferme");
         return L.join("\n");
       };
       const copyMd = () => navigator.clipboard.writeText(buildMd());
@@ -418,7 +421,7 @@
                   ))}
                 </div>
               </div>
-              <h1 style={{ margin: "0 0 6px", fontSize: 22, fontWeight: 700, letterSpacing: -0.3 }}>{ko ? "게임 UI 템플릿 도출기" : "Game UI Template Deriver"}</h1>
+              <h1 style={{ margin: "0 0 6px", fontSize: 22, fontWeight: 700, letterSpacing: -0.3 }}>{ko ? "게임 요소 그물 네트워크" : "Game Designer's Mechanic Mesh"}</h1>
               <p style={{ margin: 0, fontSize: 13, color: C.muted, lineHeight: 1.6 }}>
                 {ko
                   ? <>장르를 고르면 표준 요소가 채워지고, 요소를 손보면 그 조합의 <b style={{ color: C.text }}>필요 UI 요소</b>가 나온다. 요소로 시작하면 <b style={{ color: C.text }}>가까운 장르</b>가 역산된다. 파란 = 선택.</>
@@ -594,8 +597,12 @@
                   )}
                 </div>
 
+                {/* 게임 제목 (선택) */}
+                <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={ko ? "게임 제목 (선택) — 출력 맨 위 # 제목" : "Game title (optional) — top # heading"}
+                  style={{ width: "100%", marginTop: 16, boxSizing: "border-box", background: C.surface2, border: `1px solid ${C.border}`, color: C.text, borderRadius: 7, padding: "9px 11px", fontSize: 13 }} />
+
                 {/* 내보내기 */}
-                <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+                <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
                   <button onClick={copyMd} style={exportBtn}>{ko ? "MD 복사" : "Copy MD"}</button>
                   <button onClick={dlMd} style={exportBtn}>{ko ? ".md 저장" : "Save .md"}</button>
                   <button onClick={() => window.print()} style={{ ...exportBtn, borderColor: C.accent, color: "#F2DDAE" }}>{ko ? "PDF 인쇄" : "Print PDF"}</button>
@@ -603,11 +610,14 @@
                 <div style={{ fontSize: 10.5, color: C.faint, marginTop: 6, lineHeight: 1.5 }}>{ko ? "PDF 인쇄 → 대상을 'PDF로 저장' 선택" : "Print → choose 'Save as PDF'"}</div>
               </div>
             </div>
+            <div style={{ textAlign: "center", color: C.faint, fontSize: 11.5, marginTop: 36, paddingTop: 16, borderTop: `1px solid ${C.border}` }}><a href="https://zondug.github.io/game-tools/" target="_blank" rel="noopener" style={{ color: C.muted, textDecoration: "none", borderBottom: `1px solid ${C.border}` }}>Game Designer's Mechanic Mesh</a>, 2026 Wissen &amp; Ferme</div>
           </div>
 
           {/* 인쇄 전용 리포트 (화면 숨김, PDF에만) */}
           <div className="report-only" style={{ padding: "28px 32px", color: "#111", background: "#fff", fontFamily: "system-ui,sans-serif", lineHeight: 1.5 }}>
-            <h1 style={{ fontSize: 20, margin: "0 0 4px" }}>{ko ? "게임 UI 스펙 시트" : "Game UI Spec Sheet"}</h1>
+            {title.trim()
+              ? <><h1 style={{ fontSize: 22, margin: "0 0 2px" }}>{title.trim()}</h1><p style={{ fontSize: 12, color: "#888", margin: "0 0 12px" }}>{ko ? "게임 UI 스펙 시트" : "Game UI Spec Sheet"}</p></>
+              : <h1 style={{ fontSize: 20, margin: "0 0 4px" }}>{ko ? "게임 UI 스펙 시트" : "Game UI Spec Sheet"}</h1>}
             <p style={{ fontSize: 13, margin: "0 0 16px" }}>
               <b>{ko ? "장르" : "Genre"}:</b> {exactGenre ? T(exactGenre.name) : (ko ? "커스텀 조합" : "Custom")}
               {derived.length ? <span style={{ color: "#555" }}> · {ko ? "가까운" : "closest"}: {derived.map((d) => T(d.g.name) + " " + Math.round(d.p * 100) + "%").join(", ")}</span> : null}
@@ -621,6 +631,7 @@
             <ul style={{ fontSize: 13, margin: 0 }}>{BASE_UI.map((u) => <li key={u[0][1]}>{T(u[0])} — <span style={{ color: "#555" }}>{T(u[1])}</span></li>)}</ul>
             <p style={{ fontSize: 12, fontWeight: 700, margin: "10px 0 2px" }}>{ko ? "조합 유래" : "From this build"}</p>
             <ul style={{ fontSize: 13, margin: 0 }}>{uiList.map((u) => <li key={u.n[1]}>{T(u.n)} — <span style={{ color: "#555" }}>{T(u.d)}{u.src.length ? " (" + u.src.map((s) => T(s)).join(", ") + ")" : ""}</span></li>)}</ul>
+            <p style={{ fontSize: 11, color: "#888", marginTop: 22, borderTop: "1px solid #ccc", paddingTop: 8 }}><a href="https://zondug.github.io/game-tools/" style={{ color: "#888" }}>Game Designer's Mechanic Mesh</a>, 2026 Wissen &amp; Ferme</p>
           </div>
         </div>
       );
