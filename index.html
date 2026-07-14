@@ -32,6 +32,7 @@
       bg: "#0F1418", surface: "#161D23", surface2: "#1D262D", border: "#2A353D",
       text: "#DCE3E7", muted: "#7A8992", faint: "#4C5A62", accent: "#E0A33E",
       blue: "#6E9BC4", blueTint: "rgba(110,155,196,0.16)", teal: "#5BB784", tealTint: "rgba(91,183,132,0.14)",
+      warn: "#CB6A54", warnTint: "rgba(203,106,84,0.12)",
     };
 
     // 이중언어 헬퍼: [ko,en] 배열이면 로케일로 선택, 문자열이면 그대로
@@ -45,7 +46,7 @@
         ["aim", ["정밀 조준", "Precision Aim"]], ["unit", ["부대 관리", "Unit Command"]], ["puzzle", ["퍼즐·정렬", "Puzzle"]],
         ["rhythm", ["리듬 입력", "Rhythm"]], ["drive", ["운전", "Driving"]], ["dialogue", ["대화·선택", "Dialogue"]],
         ["search", ["탐색·관찰", "Explore/Observe"]], ["build", ["건설·배치", "Build/Place"]], ["manage", ["경영·할당", "Manage"]],
-        ["card", ["카드·덱", "Cards/Deck"]],
+        ["card", ["카드·덱", "Cards/Deck"]], ["collect", ["수집·포획", "Collect/Capture"]], ["deduce", ["설득·추리", "Deduce/Persuade"]],
       ]},
       { id: "time", name: ["시간 흐름", "Time"], hint: ["", ""], els: [
         ["realtime", ["실시간", "Real-Time"]], ["turn", ["턴제", "Turn-Based"]], ["atb", ["반턴제", "ATB"]],
@@ -54,19 +55,20 @@
       { id: "goal", name: ["목표", "Goal"], hint: ["한 판이 끝나는 이유", "how a session ends"], multi: true, els: [
         ["clear", ["클리어", "Clear"]], ["score", ["점수", "Score"]], ["survive", ["생존", "Survive"]],
         ["conquer", ["정복", "Conquer"]], ["narrative", ["서사 완결", "Narrative"]], ["infinite", ["무한", "Endless"]],
+        ["extract", ["탈출·반출", "Extraction"]],
       ]},
       { id: "growth", name: ["성장", "Growth"], hint: ["판을 거듭할 때 남는 것", "what persists across runs"], multi: true, els: [
         ["none", ["성장 없음", "None"]], ["inrun", ["판내 성장", "In-Run"]], ["perm", ["영구 스탯", "Permanent"]],
         ["equip", ["장비 축적", "Gear"]], ["skilltree", ["스킬트리", "Skill Tree"]], ["meta", ["메타 성장", "Meta"]],
       ]},
       { id: "fail", name: ["실패 처리", "Failure"], hint: ["죽으면 무엇을 잃는가", "what death costs"], els: [
-        ["retry", ["무한 재시도", "Infinite Retry"]], ["checkpoint", ["체크포인트", "Checkpoint"]], ["save", ["자유 세이브", "Free Save"]], ["permadeath", ["퍼머데스", "Perma-Death"]],
+        ["retry", ["무한 재시도", "Infinite Retry"]], ["lives", ["라이프제", "Lives"]], ["checkpoint", ["체크포인트", "Checkpoint"]], ["save", ["자유 세이브", "Free Save"]], ["permadeath", ["퍼머데스", "Perma-Death"]], ["soft", ["소프트 실패", "Soft Fail"]],
       ]},
       { id: "world", name: ["월드 생성", "World Gen"], hint: ["", ""], els: [
-        ["fixed", ["수제작 맵", "Handcrafted"]], ["procedural", ["절차적 생성", "Procedural"]],
+        ["fixed", ["수제작 맵", "Handcrafted"]], ["procedural", ["절차적 생성", "Procedural"]], ["hybrid", ["하이브리드", "Hybrid"]],
       ]},
       { id: "space", name: ["공간", "Space"], hint: ["세계의 규모와 형태", "scale & shape"], els: [
-        ["single", ["단일 화면", "Single Screen"]], ["linear", ["선형 스테이지", "Linear"]], ["open", ["오픈월드", "Open World"]], ["grid", ["그리드·타일", "Grid/Tile"]],
+        ["single", ["단일 화면", "Single Screen"]], ["linear", ["선형 스테이지", "Linear"]], ["hub", ["허브", "Hub"]], ["zoned", ["구역·존", "Zoned"]], ["open", ["오픈월드", "Open World"]], ["grid", ["그리드·타일", "Grid/Tile"]],
       ]},
       { id: "view", name: ["시점", "Viewpoint"], hint: ["", ""], els: [
         ["first", ["1인칭", "First-Person"]], ["third", ["3인칭", "Third-Person"]], ["topdown", ["탑다운", "Top-Down"]], ["side", ["사이드뷰", "Side"]], ["iso", ["아이소메트릭", "Isometric"]],
@@ -75,10 +77,10 @@
         ["2d", ["2D", "2D"]], ["25d", ["2.5D", "2.5D"]], ["3d", ["3D", "3D"]],
       ]},
       { id: "social", name: ["플레이어", "Players"], hint: ["누구와 함께하는가", "who you play with"], multi: true, els: [
-        ["solo", ["싱글", "Singleplayer"]], ["local", ["로컬 멀티", "Local Multi"]], ["coop", ["온라인 협력", "Online Co-op"]], ["team", ["팀 기반", "Team-Based"]], ["pvp", ["경쟁", "PvP"]], ["mmo", ["MMO", "MMO"]],
+        ["solo", ["싱글", "Singleplayer"]], ["local", ["로컬 멀티", "Local Multi"]], ["coop", ["온라인 협력", "Online Co-op"]], ["team", ["팀 기반", "Team-Based"]], ["pvp", ["경쟁", "PvP"]], ["mmo", ["MMO", "MMO"]], ["async", ["비동기", "Async"]],
       ]},
       { id: "econ", name: ["경제·수익", "Economy"], hint: ["재화를 어떻게 다루는가", "how currency works"], multi: true, els: [
-        ["free", ["없음·단품", "None"]], ["shop", ["인게임 상점", "In-Game Shop"]], ["gacha", ["뽑기·가챠", "Gacha"]], ["market", ["유저 거래소", "Player Market"]],
+        ["free", ["없음·단품", "None"]], ["shop", ["인게임 상점", "In-Game Shop"]], ["gacha", ["뽑기·가챠", "Gacha"]], ["market", ["유저 거래소", "Player Market"]], ["pass", ["시즌 패스", "Season Pass"]], ["ads", ["광고 보상", "Ad Reward"]],
       ]},
     ];
 
@@ -114,6 +116,17 @@
       { id: "controller", name: ["컨트롤러 지원", "Controller"], ui: [[["컨트롤러 프롬프트", "Controller Prompts"], ["버튼 안내", "button glyphs"]], [["포커스 네비게이션", "Focus Nav"], ["패드 이동", "pad navigation"]]] },
       { id: "splitscreen", name: ["화면 분할", "Split Screen"], ui: [[["분할 뷰포트", "Split Viewport"], ["다중 화면", "multi view"]], [["플레이어별 HUD", "Per-Player HUD"], ["개별 HUD", "individual"]]] },
       { id: "qte", name: ["퀵타임 이벤트", "Quick-Time Events"], ui: [[["QTE 프롬프트", "QTE Prompt"], ["버튼 타이밍", "button timing"]]] },
+      { id: "codex", name: ["도감·코덱스", "Codex/Bestiary"], ui: [[["도감 화면", "Codex Screen"], ["수집·정보", "collection/info"]], [["수집 진행률", "Collection Progress"], ["완성도", "completion"]]] },
+      { id: "fasttravel", name: ["빠른 이동", "Fast Travel"], ui: [[["이동 지점 목록", "Travel Points"], ["해금 지점", "unlocked spots"]], [["지도 마커", "Map Markers"], ["목적지 선택", "pick destination"]]] },
+      { id: "weather", name: ["날씨·주야", "Weather/Day-Night"], ui: [[["시간대·날씨 표시", "Time/Weather"], ["환경 상태", "environment"]], [["시계·달력", "Clock/Calendar"], ["주기 표시", "cycle"]]] },
+      { id: "hotbar", name: ["스킬 단축바", "Action Bar"], ui: [[["스킬 슬롯 바", "Skill Slot Bar"], ["단축 배치", "hotkeys"]], [["쿨다운 오버레이", "Cooldown Overlay"], ["재사용 표시", "CD sweep"]]] },
+      { id: "achievements", name: ["도전 과제", "Achievements"], ui: [[["업적 목록", "Achievement List"], ["잠금·해금", "locked/unlocked"]], [["진행률·보상", "Progress/Reward"], ["달성도", "completion"]]] },
+      { id: "tutorial", name: ["튜토리얼", "Tutorial"], ui: [[["안내 오버레이", "Guide Overlay"], ["조작 안내", "control hints"]], [["힌트 팝업", "Hint Popup"], ["상황 안내", "contextual tips"]]] },
+      { id: "mount", name: ["탈것·펫", "Mount/Companion"], ui: [[["소환·탈것 단축", "Summon/Mount"], ["호출 키", "call key"]], [["펫·탈것 상태", "Companion Status"], ["상태·명령", "status/commands"]]] },
+      { id: "cover", name: ["엄폐", "Cover System"], ui: [[["엄폐 지점 표시", "Cover Indicator"], ["엄폐 가능", "cover prompt"]], [["피격 방향 표시", "Damage Direction"], ["피격 방위", "hit direction"]]] },
+      { id: "photomode", name: ["포토 모드", "Photo Mode"], ui: [[["카메라·필터", "Camera/Filters"], ["구도·효과", "framing/effects"]], [["프레임·스티커", "Frame/Sticker"], ["꾸미기", "decorate"]]] },
+      { id: "faction", name: ["팩션·평판", "Faction/Reputation"], ui: [[["세력 평판 미터", "Reputation Meter"], ["세력별 호감", "faction standing"]], [["세력 관계 목록", "Faction List"], ["동맹·적대", "ally/hostile"]]] },
+      { id: "romance", name: ["로맨스·호감도", "Romance"], ui: [[["호감도 미터", "Affinity Meter"], ["관계 진전", "relationship level"]], [["관계 이벤트 목록", "Relationship Events"], ["이벤트 해금", "unlocked scenes"]]] },
     ];
     const FEAT_BY = {}; FEATURES.forEach((f) => (FEAT_BY[f.id] = f));
 
@@ -132,6 +145,8 @@
       "verb.build": [[["건설 팔레트", "Build Palette"], ["배치 목록", "placeable list"]], [["배치 프리뷰", "Placement Ghost"], ["미리보기", "preview"]], [["회전·격자 스냅", "Rotate/Snap"], ["정렬 보조", "alignment"]]],
       "verb.manage": [[["자원 표시줄", "Resource Bar"], ["보유 현황", "holdings"]], [["통계 대시보드", "Stats Dashboard"], ["생산·소비", "production/consumption"]], [["할당·배치 패널", "Assignment Panel"], ["인력·시설", "labor/facilities"]]],
       "verb.card": [[["카드 핸드", "Card Hand"], ["보유 카드", "held cards"]], [["덱·버린 더미", "Deck/Discard"], ["남은·소모", "draw/discard"]], [["카드 툴팁·조합", "Card Tooltip"], ["효과·콤보", "effect/combo"]]],
+      "verb.collect": [[["도감·수집 목록", "Collection Log"], ["보유·미보유", "owned/missing"]], [["포획·수집 인터페이스", "Capture UI"], ["획득 시도", "capture attempt"]]],
+      "verb.deduce": [[["단서·증거 보드", "Evidence Board"], ["정보 정리", "clue tracking"]], [["지목·투표 UI", "Accuse/Vote"], ["대상 지목", "point/vote"]]],
 
       "time.realtime": [[["일시정지·배속", "Pause/Speed"], ["시간 조절", "time control"]]],
       "time.turn": [[["턴 종료 버튼", "End Turn"], ["다음 턴", "advance"]], [["턴 순서", "Turn Order"], ["이니셔티브", "initiative"]]],
@@ -145,6 +160,7 @@
       "goal.conquer": [[["영토 현황", "Territory"], ["점령 상태", "control"]], [["정복 목표", "Conquest Goal"], ["승리 조건", "win condition"]]],
       "goal.narrative": [[["퀘스트 로그", "Quest Log"], ["진행 서사", "story progress"]], [["챕터 표시", "Chapter"], ["이야기 단계", "story stage"]]],
       "goal.infinite": [[["성과·마일스톤", "Milestones"], ["장기 목표", "long-term"]], [["통계 대시보드", "Stats Dashboard"], ["누적 지표", "cumulative"]]],
+      "goal.extract": [[["반출 지점 표시", "Extraction Point"], ["탈출 위치", "exfil location"]], [["소지 위험 표시", "At-Risk Loot"], ["잃을 것 경고", "loss on death"]]],
 
       "growth.inrun": [[["런 강화 목록", "Run Upgrades"], ["이번 판 획득", "this run"]]],
       "growth.perm": [[["스탯 시트", "Stat Sheet"], ["능력치", "attributes"]], [["레벨·경험치 바", "Level/XP Bar"], ["성장 진행", "progress"]], [["레벨업 화면", "Level-Up Screen"], ["드래그 분배", "drag allocate"]]],
@@ -153,6 +169,8 @@
       "growth.meta": [[["메타 언락", "Meta Unlocks"], ["영구 개방", "permanent"]], [["계승 재화", "Meta Currency"], ["런 간 화폐", "between-run"]]],
 
       "fail.retry": [[["즉시 재시작", "Instant Retry"], ["빠른 반복", "quick restart"]]],
+      "fail.lives": [[["목숨 표시", "Lives Counter"], ["잔여 목숨", "remaining lives"]], [["컨티뉴 화면", "Continue Screen"], ["이어하기", "continue"]]],
+      "fail.soft": [[["경고·적자 표시", "Warning/Deficit"], ["파산 위험", "bankruptcy risk"]]],
       "fail.checkpoint": [[["체크포인트 알림", "Checkpoint"], ["저장 지점", "save point"]]],
       "fail.save": [[["세이브·로드", "Save/Load Menu"], ["슬롯 관리", "slots"]]],
       "fail.permadeath": [[["사망 화면", "Death Screen"], ["런 종료", "run end"]], [["런 요약 통계", "Run Summary"], ["성과 정리", "stats"]]],
@@ -162,6 +180,8 @@
       "space.linear": [[["스테이지 선택", "Stage Select"], ["레벨 진입", "level entry"]], [["진행도 표시", "Progress"], ["클리어 현황", "cleared"]]],
       "space.open": [[["월드맵", "World Map"], ["전체 지도", "full map"]], [["나침반·웨이포인트", "Compass/Waypoint"], ["방향·목적지", "direction/target"]]],
       "space.grid": [[["그리드 오버레이", "Grid Overlay"], ["좌표 표시", "coordinates"]], [["이동·사거리 범위", "Range Overlay"], ["타일 하이라이트", "tile highlight"]]],
+      "space.hub": [[["허브 이동 메뉴", "Hub Navigation"], ["구역 진입", "zone entry"]]],
+      "space.zoned": [[["구역 지도", "Zone Map"], ["연결·잠금", "links/locks"]], [["잠금·해금 표시", "Lock/Unlock"], ["진입 조건", "gating"]]],
 
       "view.first": [[["크로스헤어", "Crosshair"], ["조준", "aim"]], [["체력·상태 HUD", "Health HUD"], ["생존 정보", "vitals"]]],
       "view.third": [[["체력·상태 HUD", "Health HUD"], ["생존 정보", "vitals"]], [["카메라 컨트롤", "Camera Control"], ["시점 조작", "camera"]]],
@@ -174,10 +194,13 @@
       "social.team": [[["팀 편성", "Team Setup"], ["역할 배분", "roles"]], [["팀 스코어", "Team Score"], ["팀 현황", "team status"]]],
       "social.pvp": [[["스코어보드", "Scoreboard"], ["양측 현황", "both sides"]], [["매치 타이머·로비", "Match/Lobby"], ["대전 흐름", "match flow"]], [["로그인·계정 연동", "Login/Account"], ["온라인 인증", "auth"]]],
       "social.mmo": [[["채팅창", "Chat"], ["실시간 대화", "live chat"]], [["파티·길드 프레임", "Party/Guild"], ["그룹 관리", "groups"]], [["친구 목록", "Friends List"], ["소셜", "social"]], [["거래·상점창", "Trade/Shop"], ["경제", "economy"]], [["로그인·계정 연동", "Login/Account"], ["온라인 인증", "auth"]]],
+      "social.async": [[["비동기 알림", "Async Notifications"], ["대기 결과", "pending results"]], [["유령·메시지 표시", "Ghost/Message"], ["타 유저 흔적", "other-player traces"]]],
 
       "econ.shop": [[["상점 화면", "Shop Screen"], ["구매·나가기", "buy/exit"]], [["보유 재화", "Currency"], ["필요 재화 수량", "A/B amounts"]], [["상품 카드·태그", "Item Cards"], ["New·Hot·Sale·품절", "tags"]], [["상품 상세·비교", "Item Detail"], ["성능 비교", "stat compare"]], [["착용 프리뷰", "Preview"], ["장착샷·확대", "try-on/zoom"]]],
       "econ.gacha": [[["뽑기 연출", "Gacha Roll"], ["결과 공개", "reveal"]], [["확률·천장", "Rates/Pity"], ["확률·보장", "odds/guarantee"]], [["획득 결과", "Result Screen"], ["신규·중복", "new/dupe"]]],
       "econ.market": [[["거래소 목록", "Market List"], ["검색·필터", "search/filter"]], [["등록·판매 창", "Sell Listing"], ["가격 설정", "set price"]], [["시세·거래 내역", "Price History"], ["가격 추이", "trends"]]],
+      "econ.pass": [[["시즌 패스 트랙", "Season Pass Track"], ["등급·보상", "tiers/rewards"]], [["시즌 타이머", "Season Timer"], ["잔여 기간", "time left"]]],
+      "econ.ads": [[["광고 보상 버튼", "Ad Reward Button"], ["시청 보상", "watch-to-earn"]]],
     };
 
     const BASE_UI = [
@@ -222,7 +245,49 @@
       { name: ["오토배틀러", "Auto Battler"], tag: ["", ""], prof: { "verb.unit": 0.7, "time.realtime": 0.5, "social.pvp": 0.8, "growth.inrun": 0.7, "goal.clear": 0.4 }, feats: [] },
       { name: ["던전 크롤러", "Dungeon Crawler"], tag: ["", ""], prof: { "verb.melee": 0.7, "space.grid": 0.7, "world.procedural": 0.6, "growth.equip": 0.7, "view.first": 0.5, "fail.permadeath": 0.4 }, feats: ["inventory", "loot"] },
       { name: ["라이프 심", "Life Sim"], tag: ["", ""], prof: { "verb.manage": 0.7, "goal.infinite": 0.9, "time.realtime": 0.6, "growth.perm": 0.4, "social.solo": 0.4 }, feats: [] },
-      { name: ["데이팅 심", "Dating Sim"], tag: ["", ""], prof: { "verb.dialogue": 1.0, "goal.narrative": 0.9, "growth.perm": 0.4, "fail.save": 0.4 }, feats: ["dialogueheavy", "choices", "multipleendings"] },
+      { name: ["데이팅 심", "Dating Sim"], tag: ["", ""], prof: { "verb.dialogue": 1.0, "goal.narrative": 0.9, "growth.perm": 0.4, "fail.save": 0.4 }, feats: ["dialogueheavy", "romance", "multipleendings"] },
+      { name: ["팜 시뮬", "Farming Sim"], tag: ["", ""], prof: { "verb.manage": 0.75, "verb.build": 0.5, "goal.infinite": 0.8, "growth.perm": 0.5, "time.realtime": 0.6, "world.fixed": 0.3, "view.topdown": 0.4 }, feats: ["crafting", "codex", "weather", "faction"] },
+      { name: ["서바이버라이크", "Survivors-like"], tag: ["뱀서류", "Bullet Heaven"], prof: { "verb.shoot": 0.6, "goal.survive": 0.9, "growth.inrun": 0.9, "view.topdown": 0.6, "time.realtime": 0.8, "world.procedural": 0.4, "fail.permadeath": 0.4 }, feats: ["loot", "scoreattack"] },
+      { name: ["방치형", "Idle/Incremental"], tag: ["", ""], prof: { "verb.manage": 0.6, "time.idle": 1.0, "goal.infinite": 0.9, "growth.meta": 0.7, "view.topdown": 0.2 }, feats: ["resourcemgmt", "achievements"] },
+      { name: ["포인트앤클릭", "Point & Click"], tag: ["", ""], prof: { "verb.search": 0.9, "verb.dialogue": 0.6, "goal.narrative": 0.8, "growth.none": 0.5, "space.zoned": 0.4 }, feats: ["dialogueheavy", "inventory"] },
+      { name: ["매치3", "Match-3"], tag: ["", ""], prof: { "verb.puzzle": 1.0, "goal.score": 0.7, "goal.clear": 0.5, "space.single": 0.6, "time.realtime": 0.4 }, feats: ["scoreattack"] },
+      { name: ["소셜 추리", "Social Deduction"], tag: ["어몽어스류", "Among-like"], prof: { "verb.deduce": 0.9, "social.team": 0.8, "social.pvp": 0.5, "time.realtime": 0.6, "goal.clear": 0.4 }, feats: ["classbased"] },
+      { name: ["벨트스크롤", "Beat 'em up"], tag: ["", ""], prof: { "verb.melee": 0.9, "view.side": 0.7, "space.linear": 0.6, "time.realtime": 0.8, "social.local": 0.4, "goal.clear": 0.5 }, feats: ["hacknslash"] },
+      { name: ["이머시브 심", "Immersive Sim"], tag: ["", ""], prof: { "verb.search": 0.7, "verb.shoot": 0.4, "view.first": 0.8, "space.zoned": 0.5, "growth.equip": 0.4, "time.realtime": 0.7 }, feats: ["stealth", "choices", "inventory"] },
+      { name: ["크리처 컬렉터", "Creature Collector"], tag: ["포켓몬류", "Pokémon-like"], prof: { "verb.collect": 0.9, "verb.melee": 0.3, "time.turn": 0.6, "growth.perm": 0.7, "goal.narrative": 0.5 }, feats: ["turnbasedcombat", "codex", "classbased"] },
+      { name: ["추출 슈터", "Extraction Shooter"], tag: ["타르코프류", "Tarkov-like"], prof: { "verb.shoot": 0.9, "goal.extract": 1.0, "social.pvp": 0.6, "growth.equip": 0.5, "view.first": 0.6, "world.procedural": 0.3 }, feats: ["loot", "inventory", "guncustom"] },
+    ];
+
+    /* ================= 요소 ↔ 요소 관계 ================= */
+    // 충돌: 한쪽 선택 시 상대가 어긋남(빨강). 시너지: 함께 쓰이면 좋음(초록).
+    const CONFLICTS = [
+      ["time.turn", "verb.rhythm", ["턴제 ↔ 리듬 입력 충돌", "turn-based ✗ rhythm"]],
+      ["time.turn", "verb.drive", ["턴제 ↔ 운전 충돌", "turn-based ✗ driving"]],
+      ["time.turn", "verb.platform", ["턴제 ↔ 점프 액션 충돌", "turn-based ✗ platforming"]],
+      ["time.turn", "verb.aim", ["턴제 ↔ 실시간 조준 충돌", "turn-based ✗ real-time aim"]],
+      ["time.atb", "verb.rhythm", ["반턴제 ↔ 리듬 충돌", "ATB ✗ rhythm"]],
+      ["time.atb", "verb.platform", ["반턴제 ↔ 점프 충돌", "ATB ✗ platforming"]],
+      ["time.idle", "verb.rhythm", ["방치 ↔ 실시간 조작 배타", "idle ✗ active input"]],
+      ["time.idle", "verb.drive", ["방치 ↔ 실시간 조작 배타", "idle ✗ active input"]],
+      ["time.idle", "verb.platform", ["방치 ↔ 실시간 조작 배타", "idle ✗ active input"]],
+      ["time.idle", "verb.aim", ["방치 ↔ 실시간 조작 배타", "idle ✗ active input"]],
+      ["time.idle", "verb.shoot", ["방치 ↔ 실시간 조작 배타", "idle ✗ active input"]],
+      ["time.idle", "verb.melee", ["방치 ↔ 실시간 조작 배타", "idle ✗ active input"]],
+      ["social.mmo", "fail.permadeath", ["MMO ↔ 퍼머데스 거의 배타", "MMO ✗ permadeath"]],
+      ["social.mmo", "growth.none", ["MMO ↔ 성장 없음 충돌", "MMO ✗ no growth"]],
+      ["goal.infinite", "fail.permadeath", ["무한 ↔ 퍼머데스 긴장", "endless ✗ permadeath"]],
+    ];
+    const SYNERGIES = [
+      ["fail.permadeath", "world.procedural", ["퍼머데스 + 절차 생성 = 로그라이크", "permadeath + procedural → roguelike"]],
+      ["world.procedural", "growth.meta", ["절차 생성 + 메타 성장 = 로그라이트", "procedural + meta → roguelite"]],
+      ["view.first", "dim.3d", ["1인칭 + 3D", "first-person + 3D"]],
+      ["view.side", "dim.2d", ["사이드뷰 + 2D", "side + 2D"]],
+      ["view.topdown", "space.grid", ["탑다운 + 그리드", "top-down + grid"]],
+      ["verb.unit", "space.grid", ["부대 관리 + 그리드", "unit command + grid"]],
+      ["verb.shoot", "view.first", ["쏘기 + 1인칭 = FPS", "shoot + first-person → FPS"]],
+      ["verb.card", "time.turn", ["카드 + 턴제", "cards + turn-based"]],
+      ["growth.equip", "goal.narrative", ["장비 축적 + 서사 = RPG", "gear + narrative → RPG"]],
+      ["econ.gacha", "growth.perm", ["가챠 + 영구 성장", "gacha + permanent growth"]],
     ];
 
     function genreTemplate(g) {
@@ -344,6 +409,23 @@
       }, [sig, selKeys]);
       const derived = useMemo(() => scoreGenres(selKeys).filter((x) => x.p > 0.02).slice(0, 4), [selKeys]);
 
+      // 요소 관계: chip 힌트(relMap) + 활성 관계 목록(activeRels)
+      const { relMap, activeRels } = useMemo(() => {
+        const rm = {}; const active = [];
+        const flag = (k, t) => { (rm[k] = rm[k] || {})[t] = true; };
+        CONFLICTS.forEach(([a, b, r]) => {
+          const sa = selKeys.has(a), sb = selKeys.has(b);
+          if (sa && sb) { active.push({ type: "conflict", r }); flag(a, "conflict"); flag(b, "conflict"); }
+          else if (sa) flag(b, "conflict"); else if (sb) flag(a, "conflict");
+        });
+        SYNERGIES.forEach(([a, b, r]) => {
+          const sa = selKeys.has(a), sb = selKeys.has(b);
+          if (sa && sb) active.push({ type: "synergy", r });
+          else if (sa) flag(b, "synergy"); else if (sb) flag(a, "synergy");
+        });
+        return { relMap: rm, activeRels: active };
+      }, [selKeys]);
+
       const MULTI = { verb: 1, goal: 1, growth: 1, social: 1, econ: 1 };
       const pickGenre = (g) => { setSel(genreTemplate(g)); setFeats(new Set(g.feats || [])); };
       const toggle = (axisId, elId) => setSel((p) => {
@@ -361,11 +443,13 @@
       const toggleTag = toggleSet(setTags);
       const reset = () => { setSel({}); setFeats(new Set()); setTags(new Set()); };
 
-      const axisChipStyle = (isSel, filled) => {
-        let border = C.border, bg = C.surface2, color = C.text, weight = 400;
-        if (filled && !isSel) { color = C.faint; bg = "transparent"; }
-        if (isSel) { border = C.blue; bg = C.blueTint; color = "#CFE0EE"; weight = 700; }
-        return { border: `1px solid ${border}`, background: bg, color, fontWeight: weight, borderRadius: 6, padding: "7px 11px", fontSize: 13.5, lineHeight: 1.2, cursor: "pointer", transition: "all .12s", userSelect: "none", WebkitTapHighlightColor: "transparent" };
+      const axisChipStyle = (isSel, dim, rel) => {
+        let border = C.border, bg = C.surface2, color = C.text, weight = 400, dash = false;
+        if (dim && !isSel) { color = C.faint; bg = "transparent"; }
+        if (rel && rel.synergy && !isSel) { border = C.teal; bg = C.tealTint; color = "#CDE8D9"; }
+        if (rel && rel.conflict && !isSel) { border = C.warn; bg = C.warnTint; color = "#E7B6A6"; dash = true; }
+        if (isSel) { border = (rel && rel.conflict) ? C.warn : C.blue; bg = C.blueTint; color = "#CFE0EE"; weight = 700; }
+        return { border: `1px ${dash ? "dashed" : "solid"} ${border}`, background: bg, color, fontWeight: weight, borderRadius: 6, padding: "7px 11px", fontSize: 13.5, lineHeight: 1.2, cursor: "pointer", transition: "all .12s", userSelect: "none", WebkitTapHighlightColor: "transparent" };
       };
       const multiChipStyle = (on, col, tint) => ({
         border: `1px solid ${on ? col : C.border}`, background: on ? tint : C.surface2, color: on ? "#EAF1EE" : C.text,
@@ -489,6 +573,17 @@
                   </div>
                 </div>
               )}
+
+              {activeRels.length > 0 && (
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 11.5, color: C.faint, flexShrink: 0 }}>{ko ? "관계" : "relations"}</span>
+                  {activeRels.map((rl, i) => (
+                    <span key={i} style={{ fontSize: 11.5, color: rl.type === "conflict" ? C.warn : C.teal, border: `1px solid ${rl.type === "conflict" ? C.warn : C.teal}`, borderRadius: 5, padding: "2px 7px" }}>
+                      {rl.type === "conflict" ? "⚠ " : "✦ "}{T(rl.r)}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "flex-start" }}>
@@ -510,7 +605,7 @@
                       </div>
                       <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
                         {ax.els.map(([id, lbl]) => (
-                          <button key={id} onClick={() => toggle(ax.id, id)} style={axisChipStyle(arr.includes(id), filled && !ax.multi)}>{T(lbl)}</button>
+                          <button key={id} onClick={() => toggle(ax.id, id)} style={axisChipStyle(arr.includes(id), filled && !ax.multi, relMap[`${ax.id}.${id}`])}>{T(lbl)}</button>
                         ))}
                       </div>
                     </div>
