@@ -399,7 +399,7 @@
         BASE_UI.forEach((u) => L.push("- " + T(u[0]) + " — " + T(u[1])));
         L.push("", "### " + (ko ? "조합 유래" : "From this build"));
         uiList.forEach((u) => L.push("- " + T(u.n) + " — " + T(u.d) + (u.src.length ? " (" + (ko ? "유래" : "from") + ": " + u.src.map((s) => T(s)).join(", ") + ")" : "")));
-        L.push("", "---", "[Game Designer's Mechanic Mesh](https://zondug.github.io/game-tools/), 2026 Wissen & Ferme");
+        L.push("", "---", "[Game Designer's Mechanic Mesh](https://zondug.github.io/game-tools/), 2026 Wissen & Ferme · zondug@me.com");
         return L.join("\n");
       };
       const copyMd = () => navigator.clipboard.writeText(buildMd());
@@ -610,7 +610,7 @@
                 <div style={{ fontSize: 10.5, color: C.faint, marginTop: 6, lineHeight: 1.5 }}>{ko ? "PDF 인쇄 → 대상을 'PDF로 저장' 선택" : "Print → choose 'Save as PDF'"}</div>
               </div>
             </div>
-            <div style={{ textAlign: "center", color: C.faint, fontSize: 11.5, marginTop: 36, paddingTop: 16, borderTop: `1px solid ${C.border}` }}><a href="https://zondug.github.io/game-tools/" target="_blank" rel="noopener" style={{ color: C.muted, textDecoration: "none", borderBottom: `1px solid ${C.border}` }}>Game Designer's Mechanic Mesh</a>, 2026 Wissen &amp; Ferme</div>
+            <div style={{ textAlign: "center", color: C.faint, fontSize: 11.5, marginTop: 36, paddingTop: 16, borderTop: `1px solid ${C.border}` }}><a href="https://zondug.github.io/game-tools/" target="_blank" rel="noopener" style={{ color: C.muted, textDecoration: "none", borderBottom: `1px solid ${C.border}` }}>Game Designer's Mechanic Mesh</a>, 2026 Wissen &amp; Ferme · <a href="mailto:zondug@me.com" style={{ color: C.muted, textDecoration: "none", borderBottom: `1px solid ${C.border}` }}>zondug@me.com</a></div>
           </div>
 
           {/* 인쇄 전용 리포트 (화면 숨김, PDF에만) */}
@@ -631,7 +631,7 @@
             <ul style={{ fontSize: 13, margin: 0 }}>{BASE_UI.map((u) => <li key={u[0][1]}>{T(u[0])} — <span style={{ color: "#555" }}>{T(u[1])}</span></li>)}</ul>
             <p style={{ fontSize: 12, fontWeight: 700, margin: "10px 0 2px" }}>{ko ? "조합 유래" : "From this build"}</p>
             <ul style={{ fontSize: 13, margin: 0 }}>{uiList.map((u) => <li key={u.n[1]}>{T(u.n)} — <span style={{ color: "#555" }}>{T(u.d)}{u.src.length ? " (" + u.src.map((s) => T(s)).join(", ") + ")" : ""}</span></li>)}</ul>
-            <p style={{ fontSize: 11, color: "#888", marginTop: 22, borderTop: "1px solid #ccc", paddingTop: 8 }}><a href="https://zondug.github.io/game-tools/" style={{ color: "#888" }}>Game Designer's Mechanic Mesh</a>, 2026 Wissen &amp; Ferme</p>
+            <p style={{ fontSize: 11, color: "#888", marginTop: 22, borderTop: "1px solid #ccc", paddingTop: 8 }}><a href="https://zondug.github.io/game-tools/" style={{ color: "#888" }}>Game Designer's Mechanic Mesh</a>, 2026 Wissen &amp; Ferme · zondug@me.com</p>
           </div>
         </div>
       );
