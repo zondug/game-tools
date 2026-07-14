@@ -33,6 +33,7 @@
       text: "#DCE3E7", muted: "#7A8992", faint: "#4C5A62", accent: "#E0A33E",
       blue: "#6E9BC4", blueTint: "rgba(110,155,196,0.16)", teal: "#5BB784", tealTint: "rgba(91,183,132,0.14)",
       warn: "#CB6A54", warnTint: "rgba(203,106,84,0.12)",
+      violet: "#9B8BC4", violetTint: "rgba(155,139,196,0.14)",
     };
 
     // 이중언어 헬퍼: [ko,en] 배열이면 로케일로 선택, 문자열이면 그대로
@@ -387,6 +388,29 @@
     const TAG_BY = {};
     TAG_GROUPS.forEach((grp) => grp.tags.forEach(([id, ko, en, n]) => (TAG_BY[id] = { id, name: [ko, en], n })));
 
+    /* ================= 표준 UI 화면 카탈로그 (화면 단위 체크리스트) ================= */
+    const SCREENS = [
+      { id: "title", s: ["타이틀 화면", "Title Screen"], subs: [["메인 화면·시작 메뉴", "Main/Start Menu"]] },
+      { id: "options", s: ["옵션 화면", "Options"], subs: [["카메라 설정", "Camera Settings"], ["비디오·사운드", "Video/Audio"], ["옵션 초기화", "Reset Defaults"]] },
+      { id: "stageflow", s: ["스테이지 시작→엔딩", "Stage Intro→Ending"], subs: [["스테이지 인트로", "Stage Intro"], ["결과·엔딩 화면", "Result/Ending"]] },
+      { id: "hud", s: ["기본 화면(HUD)", "Basic HUD"], subs: [] },
+      { id: "combat", s: ["전투 화면", "Combat Screen"], subs: [] },
+      { id: "stats", s: ["캐릭터 능력치 화면", "Character Stats"], subs: [["스킬트리", "Skill Tree"], ["코스튬", "Costume"]] },
+      { id: "inventory", s: ["인벤토리", "Inventory"], subs: [["보유 재화 확인", "Currency"]] },
+      { id: "crafting", s: ["제작", "Crafting"], subs: [] },
+      { id: "party", s: ["파티 구성 화면", "Party Formation"], subs: [] },
+      { id: "quests", s: ["퀘스트", "Quests"], subs: [["목표(Objectives)", "Objectives"], ["일일 미션", "Daily Missions"]] },
+      { id: "shop", s: ["상점", "Shop"], subs: [["인게임 상점", "In-Game Store"]] },
+      { id: "map", s: ["맵", "Map"], subs: [["전화면 맵", "Full-Screen Map"], ["미니맵", "Minimap"], ["던전 직링크", "Dungeon Warp"]] },
+      { id: "codex", s: ["도감", "Codex"], subs: [["인물 도감", "Characters"], ["펫 도감", "Pets"], ["몬스터 도감", "Monsters"], ["아이템 도감", "Items"]] },
+      { id: "mailbox", s: ["우편함", "Mailbox"], subs: [] },
+      { id: "pause", s: ["일시정지 화면", "Pause Screen"], subs: [] },
+      { id: "prefs", s: ["환경설정", "Preferences"], subs: [] },
+      { id: "credits", s: ["크레딧", "Credits"], subs: [] },
+      { id: "ranking", s: ["랭킹", "Ranking"], subs: [] },
+    ];
+    const SCREEN_BY = {}; SCREENS.forEach((sc) => (SCREEN_BY[sc.id] = sc));
+
     /* ================= 앱 ================= */
     function App() {
       const [locale, setLocale] = useState("ko");
@@ -396,6 +420,7 @@
       const [sel, setSel] = useState({});          // {axisId: [elId,...]}
       const [feats, setFeats] = useState(new Set()); // 기능 태그 id
       const [tags, setTags] = useState(new Set());   // 테마 태그 id
+      const [screens, setScreens] = useState(new Set()); // 표준 UI 화면 id
       const [title, setTitle] = useState("");        // 게임 제목 (선택)
 
       const selKeys = useMemo(() => new Set(Object.entries(sel).flatMap(([a, arr]) => (arr || []).map((e) => `${a}.${e}`))), [sel]);
@@ -441,7 +466,8 @@
       const toggleSet = (setter) => (id) => setter((p) => { const n = new Set(p); if (n.has(id)) n.delete(id); else n.add(id); return n; });
       const toggleFeat = toggleSet(setFeats);
       const toggleTag = toggleSet(setTags);
-      const reset = () => { setSel({}); setFeats(new Set()); setTags(new Set()); };
+      const toggleScreen = toggleSet(setScreens);
+      const reset = () => { setSel({}); setFeats(new Set()); setTags(new Set()); setScreens(new Set()); };
 
       const axisChipStyle = (isSel, dim, rel) => {
         let border = C.border, bg = C.surface2, color = C.text, weight = 400, dash = false;
@@ -469,6 +495,7 @@
       const axesSel = AXES.map((ax) => ({ name: T(ax.name), els: (sel[ax.id] || []).map((id) => T(LABEL[`${ax.id}.${id}`])) })).filter((a) => a.els.length);
       const featSel = FEATURES.filter((f) => feats.has(f.id)).map((f) => T(f.name));
       const tagSel = [...tags].map((id) => T(TAG_BY[id].name));
+      const screenSel = SCREENS.filter((sc) => screens.has(sc.id));
       const buildMd = () => {
         const L = [];
         if (title.trim()) L.push("# " + title.trim(), "", "_" + (ko ? "게임 UI 스펙 시트" : "Game UI Spec Sheet") + "_", "");
@@ -478,6 +505,7 @@
         L.push("", "## " + (ko ? "선택 요소" : "Elements"));
         axesSel.forEach((a) => L.push("- **" + a.name + "**: " + a.els.join(", ")));
         if (featSel.length) { L.push("", "## " + (ko ? "기능" : "Features")); featSel.forEach((f) => L.push("- " + f)); }
+        if (screenSel.length) { L.push("", "## " + (ko ? "표준 UI 화면" : "Standard UI Screens")); screenSel.forEach((sc) => L.push("- " + T(sc.s) + (sc.subs.length ? ": " + sc.subs.map((x) => T(x)).join(", ") : ""))); }
         if (tagSel.length) { L.push("", "## " + (ko ? "테마 태그" : "Theme Tags"), tagSel.join(", ")); }
         L.push("", "## " + (ko ? "필요 UI 요소" : "Required UI"), "", "### " + (ko ? "공통" : "Common"));
         BASE_UI.forEach((u) => L.push("- " + T(u[0]) + " — " + T(u[1])));
@@ -637,6 +665,24 @@
                     </div>
                   </div>
                 ))}
+
+                {/* 표준 UI 화면 카탈로그 */}
+                <div style={{ fontSize: 12.5, fontWeight: 600, color: C.violet, margin: "26px 0 4px" }}>{ko ? "표준 UI 화면" : "Standard UI Screens"} <span style={{ color: C.faint, fontWeight: 400 }}>{ko ? "(완전한 게임의 화면 체크리스트 · 상세 포함)" : "(full-game screen checklist)"}</span></div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 5, marginTop: 8 }}>
+                  {SCREENS.map((sc) => {
+                    const on = screens.has(sc.id);
+                    return (
+                      <button key={sc.id} onClick={() => toggleScreen(sc.id)}
+                        style={{ textAlign: "left", cursor: "pointer", display: "flex", alignItems: "baseline", gap: 8,
+                          border: `1px solid ${on ? C.violet : C.border}`, background: on ? C.violetTint : C.surface2,
+                          borderRadius: 6, padding: "7px 10px", transition: "all .12s" }}>
+                        <span style={{ width: 14, height: 14, flexShrink: 0, alignSelf: "center", borderRadius: 3, border: `1px solid ${on ? C.violet : C.faint}`, background: on ? C.violet : "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#161D23", fontWeight: 900 }}>{on ? "✓" : ""}</span>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: on ? "#E0D8F0" : C.text, flexShrink: 0 }}>{T(sc.s)}</span>
+                        {sc.subs.length > 0 && <span style={{ fontSize: 11, color: C.faint }}>{sc.subs.map((x) => T(x)).join(" · ")}</span>}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* 오른쪽: 필요 UI */}
@@ -682,6 +728,20 @@
                     )}
                   </div>
 
+                  {screens.size > 0 && (
+                    <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid ${C.border}` }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: C.violet, marginBottom: 8, letterSpacing: 0.5 }}>{ko ? "표준 화면 (선택)" : "Standard Screens"} ({screens.size})</div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                        {SCREENS.filter((sc) => screens.has(sc.id)).map((sc) => (
+                          <div key={sc.id} style={{ borderLeft: `2px solid ${C.violet}`, paddingLeft: 10 }}>
+                            <div style={{ fontSize: 13, color: C.text, fontWeight: 600 }}>{T(sc.s)}</div>
+                            {sc.subs.length > 0 && <div style={{ fontSize: 11, color: C.faint }}>{sc.subs.map((x) => T(x)).join(" · ")}</div>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {tags.size > 0 && (
                     <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid ${C.border}` }}>
                       <div style={{ fontSize: 11, fontWeight: 700, color: C.teal, marginBottom: 8, letterSpacing: 0.5 }}>{ko ? "테마·태그 (UI 무관)" : "Themes (no UI)"}</div>
@@ -720,6 +780,7 @@
             <h2 style={{ fontSize: 15, borderBottom: "1px solid #ccc", paddingBottom: 3 }}>{ko ? "선택 요소" : "Elements"}</h2>
             <ul style={{ fontSize: 13, marginTop: 6 }}>{axesSel.map((a) => <li key={a.name}><b>{a.name}</b>: {a.els.join(", ")}</li>)}</ul>
             {featSel.length ? <><h2 style={{ fontSize: 15, borderBottom: "1px solid #ccc", paddingBottom: 3 }}>{ko ? "기능" : "Features"}</h2><p style={{ fontSize: 13 }}>{featSel.join(", ")}</p></> : null}
+            {screenSel.length ? <><h2 style={{ fontSize: 15, borderBottom: "1px solid #ccc", paddingBottom: 3 }}>{ko ? "표준 UI 화면" : "Standard UI Screens"}</h2><ul style={{ fontSize: 13, marginTop: 6 }}>{screenSel.map((sc) => <li key={sc.id}><b>{T(sc.s)}</b>{sc.subs.length ? <span style={{ color: "#555" }}> — {sc.subs.map((x) => T(x)).join(", ")}</span> : null}</li>)}</ul></> : null}
             {tagSel.length ? <><h2 style={{ fontSize: 15, borderBottom: "1px solid #ccc", paddingBottom: 3 }}>{ko ? "테마 태그" : "Theme Tags"}</h2><p style={{ fontSize: 13 }}>{tagSel.join(", ")}</p></> : null}
             <h2 style={{ fontSize: 15, borderBottom: "1px solid #ccc", paddingBottom: 3 }}>{ko ? "필요 UI 요소" : "Required UI"} ({BASE_UI.length + uiList.length})</h2>
             <p style={{ fontSize: 12, fontWeight: 700, margin: "8px 0 2px" }}>{ko ? "공통" : "Common"}</p>
