@@ -405,18 +405,18 @@
 
     /* ================= 화면별 분류 ================= */
     const SCREENS_DEF = [
-      ["system", ["메뉴·시스템", "Menus & System"]],
-      ["hud", ["기본 게임 화면 (HUD)", "In-Game HUD"]],
-      ["combat", ["전투 오버레이", "Combat Overlay"]],
-      ["character", ["캐릭터·성장", "Character & Growth"]],
-      ["inventory", ["인벤토리·제작", "Inventory & Crafting"]],
-      ["map", ["맵 화면", "Map"]],
-      ["quest", ["퀘스트·진행", "Quests & Progress"]],
-      ["achieve", ["업적", "Achievements"]],
-      ["codex", ["도감·수집", "Codex & Collection"]],
-      ["shop", ["상점·경제", "Shop & Economy"]],
-      ["social", ["소셜·멀티", "Social & Multiplayer"]],
-      ["result", ["결과·전환", "Results & Transitions"]],
+      ["system", ["메뉴·시스템", "Menus & System"], "#8C9BAB"],
+      ["hud", ["기본 게임 화면 (HUD)", "In-Game HUD"], "#E0A33E"],
+      ["combat", ["전투 오버레이", "Combat Overlay"], "#D4674E"],
+      ["character", ["캐릭터·성장", "Character & Growth"], "#9B8BC4"],
+      ["inventory", ["인벤토리·제작", "Inventory & Crafting"], "#C89B5A"],
+      ["map", ["맵 화면", "Map"], "#5BB784"],
+      ["quest", ["퀘스트·진행", "Quests & Progress"], "#6E9BC4"],
+      ["achieve", ["업적", "Achievements"], "#E0C64E"],
+      ["codex", ["도감·수집", "Codex & Collection"], "#5FB3B3"],
+      ["shop", ["상점·경제", "Shop & Economy"], "#C77DBB"],
+      ["social", ["소셜·멀티", "Social & Multiplayer"], "#5A9BD4"],
+      ["result", ["결과·전환", "Results & Transitions"], "#CB6A54"],
     ];
     // 나머지(미지정) 영문명 → "hud"
     const _SCREEN_GROUPS = {
@@ -589,7 +589,7 @@
                   ))}
                 </div>
               </div>
-              <h1 style={{ margin: "0 0 6px", fontSize: 22, fontWeight: 700, letterSpacing: -0.3 }}>{ko ? "게임 요소 그물 네트워크" : "Game Designer's Mechanic Mesh"} <span style={{ fontSize: 12, fontWeight: 600, color: C.accent, verticalAlign: "middle", border: `1px solid ${C.accent}`, borderRadius: 5, padding: "1px 6px", marginLeft: 4 }}>v1.1</span></h1>
+              <h1 style={{ margin: "0 0 6px", fontSize: 22, fontWeight: 700, letterSpacing: -0.3 }}>{ko ? "게임 요소 그물 네트워크" : "Game Designer's Mechanic Mesh"} <span style={{ fontSize: 12, fontWeight: 600, color: C.accent, verticalAlign: "middle", border: `1px solid ${C.accent}`, borderRadius: 5, padding: "1px 6px", marginLeft: 4 }}>v1.2</span></h1>
               <p style={{ margin: 0, fontSize: 13, color: C.muted, lineHeight: 1.6 }}>
                 {ko
                   ? <>장르를 고르면 표준 요소가 채워지고, 요소를 손보면 그 조합의 <b style={{ color: C.text }}>필요 UI 요소</b>가 나온다. 요소로 시작하면 <b style={{ color: C.text }}>가까운 장르</b>가 역산된다. 파란 = 선택.</>
@@ -732,13 +732,13 @@
                 <div style={{ fontSize: 11.5, color: C.faint, marginBottom: 12, lineHeight: 1.5 }}>{ko ? "화면 단위로 묶임 · 체크로 포함·제외 · 하위는 세부 옵션" : "grouped by screen · check to include · sub-items are details"}</div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  {SCREENS_DEF.map(([sid, snm]) => {
+                  {SCREENS_DEF.map(([sid, snm, col]) => {
                     const items = itemsByScreen(sid);
                     if (!items.length) return null;
                     return (
-                      <div key={sid} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: "12px 14px" }}>
+                      <div key={sid} style={{ background: C.surface, border: `1px solid ${col}`, borderLeft: `4px solid ${col}`, borderRadius: 10, padding: "12px 14px" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 9 }}>
-                          <span style={{ fontSize: 12.5, fontWeight: 700, color: "#E0D8F0" }}>{T(snm)}</span>
+                          <span style={{ fontSize: 12.5, fontWeight: 700, color: col }}>{T(snm)}</span>
                           <span style={{ font: "10px ui-monospace,monospace", color: C.faint }}>{items.filter((it) => checked(it.nm[1])).length}/{items.length}</span>
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
