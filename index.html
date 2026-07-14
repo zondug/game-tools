@@ -403,6 +403,39 @@
       "Friends List": [["우편함", "Mailbox"]],
     };
 
+    /* ================= 화면별 분류 ================= */
+    const SCREENS_DEF = [
+      ["system", ["메뉴·시스템", "Menus & System"]],
+      ["hud", ["기본 게임 화면 (HUD)", "In-Game HUD"]],
+      ["combat", ["전투 오버레이", "Combat Overlay"]],
+      ["character", ["캐릭터·성장", "Character & Growth"]],
+      ["inventory", ["인벤토리·제작", "Inventory & Crafting"]],
+      ["map", ["맵 화면", "Map"]],
+      ["quest", ["퀘스트·진행", "Quests & Progress"]],
+      ["achieve", ["업적", "Achievements"]],
+      ["codex", ["도감·수집", "Codex & Collection"]],
+      ["shop", ["상점·경제", "Shop & Economy"]],
+      ["social", ["소셜·멀티", "Social & Multiplayer"]],
+      ["result", ["결과·전환", "Results & Transitions"]],
+    ];
+    // 나머지(미지정) 영문명 → "hud"
+    const _SCREEN_GROUPS = {
+      system: ["Title Screen", "Main Menu", "Settings", "Pause Menu", "Credits", "Save/Load Menu", "Seed I/O", "Difficulty Select", "Level Editor", "Controller Prompts", "Focus Nav", "Split Viewport", "Split-Screen", "Stage Select", "Camera Control", "Login/Account"],
+      combat: ["Target Highlight", "End Turn", "Turn Order", "ATB Gauge", "Pause Toggle", "Command Queue", "Action Points", "Skill Targeting", "Boss Health Bar", "Range Overlay", "Grid Overlay", "Evidence Board", "Accuse/Vote"],
+      character: ["Roster", "Run Upgrades", "Stat Sheet", "Level-Up Screen", "Skill Tree", "Skill Points", "Meta Unlocks", "Meta Currency", "Customization", "Presets", "Class Select", "Reputation"],
+      inventory: ["Inventory Grid", "Equipment Slots", "Item Tooltip", "Crafting Screen", "Rarity Colors", "Compare Tooltip", "Weapon Modding"],
+      map: ["World Map", "Hub Navigation", "Zone Map", "Lock/Unlock", "Travel Points", "Map Markers"],
+      quest: ["Quest Log", "Chapter", "Stats Dashboard", "Conquest Goal", "Progress", "Boss List", "Supply Dashboard"],
+      achieve: ["Achievement List", "Progress/Reward", "Milestones"],
+      codex: ["Codex Screen", "Collection Progress", "Collection Log", "Endings List"],
+      shop: ["Shop Screen", "Currency", "Item Cards", "Item Detail", "Preview", "Gacha Roll", "Rates/Pity", "Result Screen", "Market List", "Sell Listing", "Price History", "Trade Window", "Price Info", "Trade/Shop", "Season Pass Track", "Season Timer", "Ad Reward Button"],
+      social: ["Party Frames", "Join Prompt", "Team Setup", "Team Score", "Match/Lobby", "Chat", "Party/Guild", "Friends List", "Async Notifications", "Leaderboard"],
+      result: ["Clear Screen", "High Score", "Death Screen", "Run Summary", "Instant Retry", "Continue Screen", "Idle Earnings"],
+    };
+    const SCREEN_OF = {};
+    Object.entries(_SCREEN_GROUPS).forEach(([sid, names]) => names.forEach((n) => (SCREEN_OF[n] = sid)));
+    const screenOf = (enName) => SCREEN_OF[enName] || "hud";
+
     /* ================= 앱 ================= */
     function App() {
       const [locale, setLocale] = useState("ko");
@@ -417,6 +450,12 @@
 
       const selKeys = useMemo(() => new Set(Object.entries(sel).flatMap(([a, arr]) => (arr || []).map((e) => `${a}.${e}`))), [sel]);
       const uiList = useMemo(() => deriveUI(selKeys, feats), [selKeys, feats]);
+      // 화면별 그룹핑용 통합 목록
+      const allItems = useMemo(() => [
+        ...BASE_UI.map((u) => ({ nm: u[0], desc: u[1], src: [], base: true, screen: screenOf(u[0][1]) })),
+        ...uiList.map((u) => ({ nm: u.n, desc: u.d, src: u.src, screen: screenOf(u.n[1]) })),
+      ], [uiList]);
+      const itemsByScreen = (sid) => allItems.filter((it) => it.screen === sid);
       const chosenCount = selKeys.size + feats.size;
 
       const sig = useMemo(() => fullSig(sel, feats), [sel, feats]);
@@ -499,10 +538,13 @@
         if (featSel.length) { L.push("", "## " + (ko ? "기능" : "Features")); featSel.forEach((f) => L.push("- " + f)); }
         if (tagSel.length) { L.push("", "## " + (ko ? "테마 태그" : "Theme Tags"), tagSel.join(", ")); }
         const pushSubs = (key) => (SUB_DETAILS[key] || []).forEach((sub) => { if (checked(key + "::" + sub[1])) L.push("  - " + T(sub)); });
-        L.push("", "## " + (ko ? "필요 UI 요소" : "Required UI"), "", "### " + (ko ? "공통" : "Common"));
-        BASE_UI.forEach((u) => { if (!checked(u[0][1])) return; L.push("- " + T(u[0]) + " — " + T(u[1])); pushSubs(u[0][1]); });
-        L.push("", "### " + (ko ? "조합 유래" : "From this build"));
-        uiList.forEach((u) => { if (!checked(u.n[1])) return; L.push("- " + T(u.n) + " — " + T(u.d) + (u.src.length ? " (" + (ko ? "유래" : "from") + ": " + u.src.map((s) => T(s)).join(", ") + ")" : "")); pushSubs(u.n[1]); });
+        L.push("", "## " + (ko ? "필요 UI 요소" : "Required UI"));
+        SCREENS_DEF.forEach(([sid, snm]) => {
+          const items = allItems.filter((it) => it.screen === sid && checked(it.nm[1]));
+          if (!items.length) return;
+          L.push("", "### " + T(snm));
+          items.forEach((it) => { L.push("- " + T(it.nm) + " — " + T(it.desc) + (it.src && it.src.length ? " (" + (ko ? "유래" : "from") + ": " + it.src.map((s) => T(s)).join(", ") + ")" : "")); pushSubs(it.nm[1]); });
+        });
         L.push("", "---", "[Game Designer's Mechanic Mesh](https://zondug.github.io/game-tools/), 2026 Wissen & Ferme · zondug@me.com");
         return L.join("\n");
       };
@@ -683,40 +725,38 @@
 
               {/* 오른쪽: 필요 UI */}
               <div style={{ flex: "1 1 320px", minWidth: 300 }}>
-                <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: 16 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: "#F2DDAE" }}>{ko ? "필요 UI 요소" : "Required UI"}</span>
-                    <span style={{ font: "11px ui-monospace,monospace", color: C.faint }}>{[...BASE_UI.map((u) => u[0][1]), ...uiList.map((u) => u.n[1])].filter((k) => checked(k)).length}</span>
-                  </div>
-                  <div style={{ fontSize: 11.5, color: C.faint, marginBottom: 14, lineHeight: 1.5 }}>{ko ? "체크로 포함·제외 · 하위 항목은 세부 옵션" : "check to include/exclude · sub-items are details"}</div>
-
-                  <div style={{ marginBottom: 14 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, marginBottom: 8, letterSpacing: 0.5 }}>{ko ? "공통" : "Common"}</div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-                      {BASE_UI.map((u) => <UIItem key={u[0][1]} nm={u[0]} desc={u[1]} base />)}
-                    </div>
-                  </div>
-
-                  <div>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, marginBottom: 8, letterSpacing: 0.5 }}>{ko ? "이 조합이 요구하는 것" : "From this build"}</div>
-                    {uiList.length === 0 ? (
-                      <div style={{ fontSize: 12.5, color: C.faint, lineHeight: 1.6 }}>{ko ? "장르나 요소를 고르면 채워진다." : "Pick a genre or elements."}</div>
-                    ) : (
-                      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                        {uiList.map((u) => <UIItem key={u.n[1]} nm={u.n} desc={u.d} srcs={u.src} />)}
-                      </div>
-                    )}
-                  </div>
-
-                  {tags.size > 0 && (
-                    <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid ${C.border}` }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: C.teal, marginBottom: 8, letterSpacing: 0.5 }}>{ko ? "테마·태그 (UI 무관)" : "Themes (no UI)"}</div>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                        {[...tags].map((id) => <span key={id} style={{ fontSize: 12, color: "#CDE8D9", background: C.tealTint, border: `1px solid ${C.teal}`, borderRadius: 5, padding: "2px 7px" }}>{T(TAG_BY[id].name)}</span>)}
-                      </div>
-                    </div>
-                  )}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: "#F2DDAE" }}>{ko ? "필요 UI 요소 · 화면별" : "Required UI · by Screen"}</span>
+                  <span style={{ font: "11px ui-monospace,monospace", color: C.faint }}>{allItems.filter((it) => checked(it.nm[1])).length}</span>
                 </div>
+                <div style={{ fontSize: 11.5, color: C.faint, marginBottom: 12, lineHeight: 1.5 }}>{ko ? "화면 단위로 묶임 · 체크로 포함·제외 · 하위는 세부 옵션" : "grouped by screen · check to include · sub-items are details"}</div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  {SCREENS_DEF.map(([sid, snm]) => {
+                    const items = itemsByScreen(sid);
+                    if (!items.length) return null;
+                    return (
+                      <div key={sid} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: "12px 14px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 9 }}>
+                          <span style={{ fontSize: 12.5, fontWeight: 700, color: "#E0D8F0" }}>{T(snm)}</span>
+                          <span style={{ font: "10px ui-monospace,monospace", color: C.faint }}>{items.filter((it) => checked(it.nm[1])).length}/{items.length}</span>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                          {items.map((it) => <UIItem key={it.nm[1]} nm={it.nm} desc={it.desc} srcs={it.base ? undefined : it.src} />)}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {tags.size > 0 && (
+                  <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: "12px 14px", marginTop: 12 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: C.teal, marginBottom: 8, letterSpacing: 0.5 }}>{ko ? "테마·태그 (UI 무관)" : "Themes (no UI)"}</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                      {[...tags].map((id) => <span key={id} style={{ fontSize: 12, color: "#CDE8D9", background: C.tealTint, border: `1px solid ${C.teal}`, borderRadius: 5, padding: "2px 7px" }}>{T(TAG_BY[id].name)}</span>)}
+                    </div>
+                  </div>
+                )}
 
                 {/* 게임 제목 (선택) */}
                 <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={ko ? "게임 제목 (선택) — 출력 맨 위 # 제목" : "Game title (optional) — top # heading"}
@@ -748,10 +788,19 @@
             {featSel.length ? <><h2 style={{ fontSize: 15, borderBottom: "1px solid #ccc", paddingBottom: 3 }}>{ko ? "기능" : "Features"}</h2><p style={{ fontSize: 13 }}>{featSel.join(", ")}</p></> : null}
             {tagSel.length ? <><h2 style={{ fontSize: 15, borderBottom: "1px solid #ccc", paddingBottom: 3 }}>{ko ? "테마 태그" : "Theme Tags"}</h2><p style={{ fontSize: 13 }}>{tagSel.join(", ")}</p></> : null}
             <h2 style={{ fontSize: 15, borderBottom: "1px solid #ccc", paddingBottom: 3 }}>{ko ? "필요 UI 요소" : "Required UI"}</h2>
-            <p style={{ fontSize: 12, fontWeight: 700, margin: "8px 0 2px" }}>{ko ? "공통" : "Common"}</p>
-            <ul style={{ fontSize: 13, margin: 0 }}>{BASE_UI.filter((u) => checked(u[0][1])).map((u) => <li key={u[0][1]}>{T(u[0])} — <span style={{ color: "#555" }}>{T(u[1])}</span>{(SUB_DETAILS[u[0][1]] || []).filter((sub) => checked(u[0][1] + "::" + sub[1])).length ? <ul>{(SUB_DETAILS[u[0][1]] || []).filter((sub) => checked(u[0][1] + "::" + sub[1])).map((sub) => <li key={sub[1]} style={{ color: "#555" }}>{T(sub)}</li>)}</ul> : null}</li>)}</ul>
-            <p style={{ fontSize: 12, fontWeight: 700, margin: "10px 0 2px" }}>{ko ? "조합 유래" : "From this build"}</p>
-            <ul style={{ fontSize: 13, margin: 0 }}>{uiList.filter((u) => checked(u.n[1])).map((u) => <li key={u.n[1]}>{T(u.n)} — <span style={{ color: "#555" }}>{T(u.d)}{u.src.length ? " (" + u.src.map((s) => T(s)).join(", ") + ")" : ""}</span>{(SUB_DETAILS[u.n[1]] || []).filter((sub) => checked(u.n[1] + "::" + sub[1])).length ? <ul>{(SUB_DETAILS[u.n[1]] || []).filter((sub) => checked(u.n[1] + "::" + sub[1])).map((sub) => <li key={sub[1]} style={{ color: "#555" }}>{T(sub)}</li>)}</ul> : null}</li>)}</ul>
+            {SCREENS_DEF.map(([sid, snm]) => {
+              const items = allItems.filter((it) => it.screen === sid && checked(it.nm[1]));
+              if (!items.length) return null;
+              return (
+                <div key={sid}>
+                  <p style={{ fontSize: 12.5, fontWeight: 700, margin: "10px 0 2px" }}>{T(snm)}</p>
+                  <ul style={{ fontSize: 13, margin: 0 }}>{items.map((it) => {
+                    const subs = (SUB_DETAILS[it.nm[1]] || []).filter((sub) => checked(it.nm[1] + "::" + sub[1]));
+                    return <li key={it.nm[1]}>{T(it.nm)} — <span style={{ color: "#555" }}>{T(it.desc)}{it.src && it.src.length ? " (" + it.src.map((s) => T(s)).join(", ") + ")" : ""}</span>{subs.length ? <ul>{subs.map((sub) => <li key={sub[1]} style={{ color: "#555" }}>{T(sub)}</li>)}</ul> : null}</li>;
+                  })}</ul>
+                </div>
+              );
+            })}
             <p style={{ fontSize: 11, color: "#888", marginTop: 22, borderTop: "1px solid #ccc", paddingTop: 8 }}><a href="https://zondug.github.io/game-tools/" style={{ color: "#888" }}>Game Designer's Mechanic Mesh</a>, 2026 Wissen &amp; Ferme · zondug@me.com</p>
           </div>
         </div>
