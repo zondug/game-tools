@@ -447,6 +447,9 @@
       const [tags, setTags] = useState(new Set());   // 테마 태그 id
       const [unchecked, setUnchecked] = useState(new Set()); // 제외한 UI 항목/하위옵션 key
       const [title, setTitle] = useState("");        // 게임 제목 (선택)
+      const [templates, setTemplates] = useState(() => { try { return JSON.parse(localStorage.getItem("gemm_templates_v1") || "{}"); } catch (e) { return {}; } });
+      const [activeTpl, setActiveTpl] = useState(null);
+      const [tplName, setTplName] = useState("");
 
       const selKeys = useMemo(() => new Set(Object.entries(sel).flatMap(([a, arr]) => (arr || []).map((e) => `${a}.${e}`))), [sel]);
       const uiList = useMemo(() => deriveUI(selKeys, feats), [selKeys, feats]);
@@ -499,7 +502,16 @@
       const toggleTag = toggleSet(setTags);
       const toggleCheck = toggleSet(setUnchecked);      // 항목 체크 해제/복원
       const checked = (key) => !unchecked.has(key);
-      const reset = () => { setSel({}); setFeats(new Set()); setTags(new Set()); setUnchecked(new Set()); };
+      const reset = () => { setSel({}); setFeats(new Set()); setTags(new Set()); setUnchecked(new Set()); setTitle(""); };
+
+      // ── 템플릿 저장/로드 (localStorage) ──
+      const persistTpl = (obj) => { try { localStorage.setItem("gemm_templates_v1", JSON.stringify(obj)); } catch (e) {} };
+      const snapshot = () => ({ sel, feats: [...feats], tags: [...tags], unchecked: [...unchecked], title });
+      const saveTpl = (name) => { const nm = (name || "").trim(); if (!nm) return; const next = { ...templates, [nm]: snapshot() }; setTemplates(next); persistTpl(next); setActiveTpl(nm); setTplName(""); };
+      const loadTpl = (name) => { const d = templates[name]; if (!d) return; setSel(d.sel || {}); setFeats(new Set(d.feats || [])); setTags(new Set(d.tags || [])); setUnchecked(new Set(d.unchecked || [])); setTitle(d.title || ""); setActiveTpl(name); };
+      const toggleTpl = (name) => { if (activeTpl === name) { reset(); setActiveTpl(null); } else loadTpl(name); };
+      const updateTpl = () => { if (!activeTpl) return; const next = { ...templates, [activeTpl]: snapshot() }; setTemplates(next); persistTpl(next); };
+      const deleteTpl = (name) => { const next = { ...templates }; delete next[name]; setTemplates(next); persistTpl(next); if (activeTpl === name) setActiveTpl(null); };
 
       const axisChipStyle = (isSel, dim, rel) => {
         let border = C.border, bg = C.surface2, color = C.text, weight = 400, dash = false;
@@ -596,6 +608,25 @@
                   : <>Pick a genre to load its template, tweak elements to get the <b style={{ color: C.text }}>required UI</b>, or start from elements and the <b style={{ color: C.text }}>closest genre</b> is inferred. Blue = selected.</>}
               </p>
             </header>
+
+            {/* 저장된 템플릿 */}
+            <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap", marginBottom: 14 }}>
+              <span style={{ fontSize: 11.5, color: C.faint, flexShrink: 0 }}>{ko ? "템플릿" : "Templates"}</span>
+              {Object.keys(templates).map((name) => {
+                const on = activeTpl === name;
+                return (
+                  <span key={name} style={{ display: "inline-flex", alignItems: "center", gap: 4, border: `1px solid ${on ? C.accent : C.border}`, background: on ? "rgba(224,163,62,0.16)" : C.surface2, color: on ? "#F2DDAE" : C.text, borderRadius: 6, padding: "3px 4px 3px 9px", fontSize: 12.5 }}>
+                    <button onClick={() => toggleTpl(name)} style={{ background: "transparent", border: "none", color: "inherit", cursor: "pointer", fontSize: 12.5, padding: 0, fontWeight: on ? 700 : 400 }}>{name}</button>
+                    <button onClick={() => deleteTpl(name)} title={ko ? "삭제" : "delete"} style={{ background: "transparent", border: "none", color: C.faint, cursor: "pointer", fontSize: 13, padding: "0 2px", fontWeight: 700 }}>×</button>
+                  </span>
+                );
+              })}
+              {Object.keys(templates).length === 0 && <span style={{ fontSize: 11.5, color: C.faint }}>{ko ? "아직 없음" : "none yet"}</span>}
+              <input value={tplName} onChange={(e) => setTplName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") saveTpl(tplName); }} placeholder={ko ? "이름" : "name"}
+                style={{ width: 110, marginLeft: 6, background: C.surface2, border: `1px solid ${C.border}`, color: C.text, borderRadius: 6, padding: "5px 8px", fontSize: 12.5 }} />
+              <button onClick={() => saveTpl(tplName)} style={{ cursor: "pointer", background: C.surface2, border: `1px solid ${C.border}`, color: C.text, borderRadius: 6, padding: "5px 11px", fontSize: 12.5 }}>{ko ? "저장" : "Save"}</button>
+              <button onClick={updateTpl} disabled={!activeTpl} style={{ cursor: activeTpl ? "pointer" : "default", background: "transparent", border: `1px solid ${activeTpl ? C.accent : C.border}`, color: activeTpl ? "#F2DDAE" : C.faint, borderRadius: 6, padding: "5px 11px", fontSize: 12.5, opacity: activeTpl ? 1 : 0.5 }}>{ko ? "업데이트" : "Update"}</button>
+            </div>
 
             {/* 상단 고정: 장르 + 선택 요약 */}
             <div style={{ position: "sticky", top: 0, zIndex: 20, background: C.bg, paddingTop: 8, paddingBottom: 12, marginBottom: 16, borderBottom: `1px solid ${C.border}` }}>
