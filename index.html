@@ -505,7 +505,7 @@
                   ))}
                 </div>
               </div>
-              <h1 style={{ margin: "0 0 6px", fontSize: 22, fontWeight: 700, letterSpacing: -0.3 }}>{ko ? "게임 요소 그물 네트워크" : "Game Designer's Mechanic Mesh"}</h1>
+              <h1 style={{ margin: "0 0 6px", fontSize: 22, fontWeight: 700, letterSpacing: -0.3 }}>{ko ? "게임 요소 그물 네트워크" : "Game Designer's Mechanic Mesh"} <span style={{ fontSize: 12, fontWeight: 600, color: C.accent, verticalAlign: "middle", border: `1px solid ${C.accent}`, borderRadius: 5, padding: "1px 6px", marginLeft: 4 }}>v1.1</span></h1>
               <p style={{ margin: 0, fontSize: 13, color: C.muted, lineHeight: 1.6 }}>
                 {ko
                   ? <>장르를 고르면 표준 요소가 채워지고, 요소를 손보면 그 조합의 <b style={{ color: C.text }}>필요 UI 요소</b>가 나온다. 요소로 시작하면 <b style={{ color: C.text }}>가까운 장르</b>가 역산된다. 파란 = 선택.</>
@@ -640,7 +640,7 @@
               </div>
 
               {/* 오른쪽: 필요 UI */}
-              <div style={{ flex: "1 1 320px", minWidth: 300, position: "sticky", top: 190 }}>
+              <div style={{ flex: "1 1 320px", minWidth: 300 }}>
                 <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: 16 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
                     <span style={{ fontSize: 14, fontWeight: 700, color: "#F2DDAE" }}>{ko ? "필요 UI 요소" : "Required UI"}</span>
