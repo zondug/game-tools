@@ -1,0 +1,27 @@
+{
+  "name": "game-tools",
+  "version": "2.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild src/app.jsx --bundle --minify --format=iife --outfile=dist/app.js --jsx=automatic --define:process.env.NODE_ENV='\"production\"'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zondug/game-tools.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/zondug/game-tools/issues"
+  },
+  "homepage": "https://github.com/zondug/game-tools#readme",
+  "dependencies": {
+    "esbuild": "0.25.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "private": true
+}
